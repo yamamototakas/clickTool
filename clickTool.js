@@ -4,10 +4,9 @@ const zlib = require('zlib');
 const util = require('util');
 const http = require('http');
 
-const Agent = require('socks5-http-client/lib/Agent');
-const soks5 = require('socks5-http-client');
-
+var jQuery = require('jquery-deferred');
 var postData = require('./credential.json');
+
 postData=JSON.stringify(postData);
 var postOptions = {
     hostname: 'hapitas.jp',
@@ -73,6 +72,71 @@ var Cookies;
 var CookieHeaders = [];
 //exports.handler = (event, context, callback) => {
 //    console.log("recived event", event);
+var delay = function(){
+    $ = require('jquery-deferred');
+    var d = $.Deferred();
+    console.log('deffinition of d');
+    setTimeout(function(){
+    console.log('before resolve');
+    d.resolve();
+    console.log('after resolve');
+    },1000);
+    return d;
+};
+delay()
+    .then(function(){
+    console.log('delayed');
+    })
+    .then(function(){
+    console.log('delayed2');
+    })
+    .fail(function(error){
+    console.log('delayed error!!');
+});
+
+var dfdSingin = function (Cookies) {
+    var dfd = jQuery.Deferred();
+
+    request.post(post_options_request, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            cookieHeaders = response.headers["set-cookie"];
+            Cookies = cookieHeaders[cookieHeaders.length - 1].match(/(\S+);/)[1];
+            options_request.headers["Cookie"]=Cookies;
+            console.log(options_request);
+            dfd.resolve();
+
+        }
+        else {
+            console.log("Error happened", error);
+            dfd.reject();
+
+        }
+        return dfd.promise();
+    });
+};
+
+var dfdCandidateURL = function (Cookies) {
+    var dfd = jQuery.Deferred();
+
+    request.post(post_options_request, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            cookieHeaders = response.headers["set-cookie"];
+            Cookies = cookieHeaders[cookieHeaders.length - 1].match(/(\S+);/)[1];
+            options_request.headers["Cookie"]=Cookies;
+            console.log(options_request);
+            dfd.resolve();
+
+        }
+        else {
+            console.log("Error happened", error);
+            dfd.reject();
+
+        }
+        return dfd.promise();
+    });
+};
+
+return 0;
 
 request.post(post_options_request, function (error, response, body) {
     if (!error && response.statusCode == 200) {
