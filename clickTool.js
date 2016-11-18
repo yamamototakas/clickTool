@@ -15,14 +15,16 @@ var options_request = {
         "Connection": "keep-alive",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "User-Agent": "Mozilla/5.0 (Windows NT 6.0) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2",
-//        "Referer": "https://hapitas.jp/",
-        "Accept-Encoding": "sdch",//gzip,deflate,sdch",
+        //"Referer": "https://hapitas.jp/auth/signin",
+        "Accept-Encoding": "gzip,deflate,sdch",
         "Accept-Language": "ja,en-US;q=0.8,en;q=0.6",
-        'Content-Type': 'text/plain;charset=utf-8',
-        "Proxy-Connection": "keep-alive",
+        //'Content-Type': 'text/plain;charset=utf-8',
+        "Upgrade-Insecure-Requests": "1",
+
+        //"Proxy-Connection": "keep-alive",
     },
 //    proxy: 'http://myhost:8888',
-    strictSSL: false,
+//    strictSSL: false,
     jar: true
 };
 
@@ -39,7 +41,7 @@ var post_options_request = {
     },
     form: postData,
 //    proxy: 'http://myhost:8888',
-    strictSSL: false,
+//    strictSSL: false,
     jar: true
 };
 
@@ -53,8 +55,7 @@ var urlList;
 //exports.handler = (event, context, callback) => {
 //    console.log("recived event", event);
 var delay = function(){
-    $ = require('jquery-deferred');
-    var d = $.Deferred();
+    var d = jQuery.Deferred();
     console.log('deffinition of d');
     setTimeout(function(){
     console.log('before resolve');
@@ -80,7 +81,7 @@ var dfdSingin = function (options) {
     request.post(options, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             var tmpCookie = response.headers["set-cookie"];
-            Cookies = tmpCookie[tmpCookie.length - 1].match(/(\S+);/)[1];
+            Cookies = tmpCookie[tmpCookie.length-1].match(/(\S+);/)[1];
             dfd.resolve();
         }
         else {
@@ -88,8 +89,8 @@ var dfdSingin = function (options) {
             dfd.reject();
 
         }
-        return dfd.promise();
     });
+    return dfd.promise();
 };
 
 var dfdCandidateURL = function (options) {
@@ -108,8 +109,8 @@ var dfdCandidateURL = function (options) {
             dfd.reject();
 
         }
-        return dfd.promise();
     });
+    return dfd.promise();
 };
 
 var dfdGetURL = function (options) {
@@ -124,14 +125,26 @@ var dfdGetURL = function (options) {
             console.log("Error happened", error);
             dfd.reject();
         }
-        return dfd.promise();
     });
+    return dfd.promise();
 };
 
-options_request.url = "http://hapitas.jp/clickget/recive/id/2446/apn/top_clickget";
+dfdSingin(post_options_request)
+    .then(function(){
+        console.log(Cookies);
+    })
+    .then(function(){
+        options_request.url ="http://hapitas.jp/index/ajaxclickget";
+        options_request.headers["Cookie"] = Cookies;
+        dfdGetURL(options_request);
+    })
+    .fail(function(error){
+        console.log('Main function delayed error!!');
+});
+options_request.url ="http://hapitas.jp/index/ajaxclickget";
 options_request.headers["Cookie"] = "x-hapitas-yourtoken=4gie942ln4u41cb8f0j239dib47p78ln";
 
-dfdGetURL(options_request);
+//dfdGetURL(options_request);
 
 
 //*//
