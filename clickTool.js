@@ -128,8 +128,8 @@ var dfdGetURL = function (options) {
     });
 };
 
-options_request.url = "url";
-options_request.headers["Cookie"] = "url";
+options_request.url = "http://hapitas.jp/clickget/recive/id/2446/apn/top_clickget";
+options_request.headers["Cookie"] = "x-hapitas-yourtoken=4gie942ln4u41cb8f0j239dib47p78ln";
 
 dfdGetURL(options_request);
 
