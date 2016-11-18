@@ -117,6 +117,7 @@ var dfdGetURL = function (options) {
 
     request.get(options, function (error, response, body) {
         if (!error && response.statusCode == 200) {
+            console.log(response.headers);
             dfd.resolve();
         }
         else {
@@ -127,6 +128,10 @@ var dfdGetURL = function (options) {
     });
 };
 
+options_request.url = "url";
+options_request.headers["Cookie"] = "url";
+
+dfdGetURL(options_request);
 
 
 //*//
