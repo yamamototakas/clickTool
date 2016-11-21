@@ -16,9 +16,9 @@ var options_request = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "User-Agent": "Mozilla/5.0 (Windows NT 6.0) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2",
         //"Referer": "https://hapitas.jp/auth/signin",
-        "Accept-Encoding": "gzip,deflate,sdch",
+        "Accept-Encoding": "sdch",
         "Accept-Language": "ja,en-US;q=0.8,en;q=0.6",
-        //'Content-Type': 'text/plain;charset=utf-8',
+        'Content-Type': 'text/plain;charset=utf-8',
         "Upgrade-Insecure-Requests": "1",
 
         //"Proxy-Connection": "keep-alive",
@@ -37,15 +37,21 @@ var post_options_request = {
         "Referer": "https://hapitas.jp/",
         "Accept-Encoding": "sdch",//gzip,deflate,sdch",
         "Accept-Language": "ja,en-US;q=0.8,en;q=0.6",
-        'Content-Type': 'text/plain;charset=utf-8'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        "Upgrade-Insecure-Requests": "1",
+        "Content-Length": "100",//Buffer.byteLength(postData),
     },
+/*//    form: {
+            mail: 'mossom9@gmail.com',
+            password: '0606060606060606',
+            login_keep: 'on',
+            signin: 'login'
+    },//*/
     form: postData,
 //    proxy: 'http://myhost:8888',
 //    strictSSL: false,
     jar: true
 };
-
-console.log(postData);
 
 //return null;
 
@@ -82,6 +88,9 @@ var dfdSingin = function (options) {
         if (!error && response.statusCode == 200) {
             var tmpCookie = response.headers["set-cookie"];
             Cookies = tmpCookie[tmpCookie.length-1].match(/(\S+);/)[1];
+            console.log(options);
+            console.log(response.headers);
+            //console.log(body);
             dfd.resolve();
         }
         else {
@@ -98,16 +107,14 @@ var dfdCandidateURL = function (options) {
 
     request.get(options, function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            //console.log(body) // Show the HTML for the Google homepage.
-            console.log(response.headers);
             var result=body.match(/clickget.recive.+top_clickget/g);
             urlList = new Set(result);
+            console.log(response.headers);
             dfd.resolve();
         }
         else {
             console.log("Error happened", error);
             dfd.reject();
-
         }
     });
     return dfd.promise();
@@ -118,7 +125,9 @@ var dfdGetURL = function (options) {
 
     request.get(options, function (error, response, body) {
         if (!error && response.statusCode == 200) {
+            console.log(options);
             console.log(response.headers);
+            //console.log(body);
             dfd.resolve();
         }
         else {
@@ -129,6 +138,7 @@ var dfdGetURL = function (options) {
     return dfd.promise();
 };
 
+/*
 dfdSingin(post_options_request)
     .then(function(){
         console.log(Cookies);
@@ -136,15 +146,47 @@ dfdSingin(post_options_request)
     .then(function(){
         options_request.url ="http://hapitas.jp/index/ajaxclickget";
         options_request.headers["Cookie"] = Cookies;
+        return dfdCandidateURL(options_request);
+    })
+    .then(function(){
+        console.log(urlList);
+        urlList.forEach(function(each) {
+            options_request.url ="http://hapitas.jp/" + each;
+            console.log(options_request);
+            return dfdGetURL(options_request);
+        });
+    })
+    .fail(function(error){
+        console.log('Main function delayed error!!');
+});
+*///
+
+var set = [
+  'clickget/recive/id/2436/apn/top_clickget',
+  'clickget/recive/id/2437/apn/top_clickget',
+  'clickget/recive/id/2438/apn/top_clickget',
+  'clickget/recive/id/2439/apn/top_clickget',
+  'clickget/recive/id/2442/apn/top_clickget',
+  'clickget/recive/id/2443/apn/top_clickget',
+  'clickget/recive/id/2444/apn/top_clickget',
+  'clickget/recive/id/2445/apn/top_clickget',
+  'clickget/recive/id/2446/apn/top_clickget' ];
+
+
+//post_options_request.url = 'http://www.kojikoji.net/';
+
+dfdSingin(post_options_request)
+    .then(function(){
+        console.log(Cookies);
+    })
+    .then(function(){
+        options_request.url ="https://hapitas.jp/" + 'clickget/recive/id/2436/apn/top_clickget';
+        options_request.headers["Cookie"] = Cookies;
+            //'x-hapitas-yourtoken=d1pe0h3rpei3964edmbsfpko5fcmp6lq';
         dfdGetURL(options_request);
     })
     .fail(function(error){
         console.log('Main function delayed error!!');
 });
-options_request.url ="http://hapitas.jp/index/ajaxclickget";
-options_request.headers["Cookie"] = "x-hapitas-yourtoken=4gie942ln4u41cb8f0j239dib47p78ln";
-
-//dfdGetURL(options_request);
-
 
 //*//
