@@ -7,7 +7,8 @@ const http = require('http');
 var jQuery = require('jquery-deferred');
 var postData = require('./credential.json');
 
-postData=JSON.stringify(postData);
+
+//postData=JSON.stringify(postData);
 
 var options_request = {
     url: 'http://hapitas.jp/',
@@ -29,7 +30,7 @@ var options_request = {
 };
 
 var post_options_request = {
-    url: 'https://hapitas.jp/auth/signin?',
+    url: 'https://hapitas.jp/auth/signin',
     headers:{
         "Connection": "keep-alive",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -39,7 +40,7 @@ var post_options_request = {
         "Accept-Language": "ja,en-US;q=0.8,en;q=0.6",
         'Content-Type': 'application/x-www-form-urlencoded',
         "Upgrade-Insecure-Requests": "1",
-        "Content-Length": "100",//Buffer.byteLength(postData),
+        //"Content-Length": "108"//Buffer.byteLength(postData),
     },
 /*//    form: {
             mail: 'mossom9@gmail.com',
@@ -54,7 +55,7 @@ var post_options_request = {
 };
 
 //return null;
-
+console.log(Buffer.byteLength(JSON.stringify(postData)+'\n'));
 var Cookies;
 var CookieHeaders = [];
 var urlList;
@@ -85,18 +86,18 @@ var dfdSingin = function (options) {
     var dfd = jQuery.Deferred();
 
     request.post(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
+        if (!error) {
             var tmpCookie = response.headers["set-cookie"];
+            console.log(tmpCookie);
             Cookies = tmpCookie[tmpCookie.length-1].match(/(\S+);/)[1];
             console.log(options);
             console.log(response.headers);
-            //console.log(body);
             dfd.resolve();
         }
         else {
+            console.log(response.statusCode);
             console.log("Error happened", error);
             dfd.reject();
-
         }
     });
     return dfd.promise();
@@ -107,8 +108,11 @@ var dfdCandidateURL = function (options) {
 
     request.get(options, function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            var result=body.match(/clickget.recive.+top_clickget/g);
-            urlList = new Set(result);
+            //console.log(body);
+            var result=body.match(/(clickget.recive.+top_clickget)/g);
+            var setResult = new Set(result);
+            urlList = [...setResult];
+
             console.log(response.headers);
             dfd.resolve();
         }
@@ -127,6 +131,16 @@ var dfdGetURL = function (options) {
         if (!error && response.statusCode == 200) {
             console.log(options);
             console.log(response.headers);
+            ///item/redirect/itemid/49694/p/0/click/2449/apn/top_clickget/linkid/782
+            ///item/redirect/itemid/63079/p/0/click/2448/apn/top_clickget
+            var result=body.match(/(item.redirect\S+)"\s/);
+            if(result){
+                options.url="http://hapitas.jp/"+result[1];
+                options.headers["Cookie"] = Cookies;
+                console.log(options);
+                return dfdGetURL(options);
+            }
+
             //console.log(body);
             dfd.resolve();
         }
@@ -173,18 +187,27 @@ var set = [
   'clickget/recive/id/2446/apn/top_clickget' ];
 
 
-//post_options_request.url = 'http://www.kojikoji.net/';
+//post_options_request.url = 'http://192.168.10.10/';
 
 dfdSingin(post_options_request)
     .then(function(){
         console.log(Cookies);
     })
     .then(function(){
-        options_request.url ="https://hapitas.jp/" + 'clickget/recive/id/2436/apn/top_clickget';
+        options_request.url ="http://hapitas.jp/index/ajaxclickget";
         options_request.headers["Cookie"] = Cookies;
-            //'x-hapitas-yourtoken=d1pe0h3rpei3964edmbsfpko5fcmp6lq';
-        dfdGetURL(options_request);
+        return dfdCandidateURL(options_request);
     })
+    .then(function(){
+        console.log(urlList);
+        //urlList.forEach(function(each) {
+        var each=urlList[2];
+            options_request.url ="http://hapitas.jp/" + each;
+            options_request.headers["Cookie"] = Cookies;
+            //console.log(options_request);
+            return dfdGetURL(options_request);
+        //});
+    })//*//
     .fail(function(error){
         console.log('Main function delayed error!!');
 });
