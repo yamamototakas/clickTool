@@ -7,7 +7,15 @@ const http = require('http');
 var jQuery = require('jquery-deferred');
 var postData = require('./credential.json');
 
+console.log(postData);
+console.log(postData[1]);
+console.log(postData['password']);
+console.log("Inspect\n", util.inspect(postData));
+console.log(postData.length);
+console.log(JSON.stringify(postData, null, 2));
+console.log(Object.keys(postData));
 
+return;
 //postData=JSON.stringify(postData);
 
 var options_request = {
