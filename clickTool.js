@@ -200,13 +200,13 @@ dfdSingin(post_options_request)
     })
     .then(function(){
         console.log(urlList);
-        //urlList.forEach(function(each) {
-        var each=urlList[2];
+        urlList.forEach(function(each) {
+        //var each=urlList[2];
             options_request.url ="http://hapitas.jp/" + each;
             options_request.headers["Cookie"] = Cookies;
             //console.log(options_request);
             return dfdGetURL(options_request);
-        //});
+        });
     })//*//
     .fail(function(error){
         console.log('Main function delayed error!!');
