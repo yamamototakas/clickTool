@@ -29,8 +29,6 @@ var options_request = {
         "Accept-Language": "ja,en-US;q=0.8,en;q=0.6",
         'Content-Type': 'text/plain;charset=utf-8',
         "Upgrade-Insecure-Requests": "1",
-
-        //"Proxy-Connection": "keep-alive",
     },
 //    proxy: 'http://myhost:8888',
 //    strictSSL: false,
@@ -50,25 +48,19 @@ var post_options_request = {
         "Upgrade-Insecure-Requests": "1",
         //"Content-Length": "108"//Buffer.byteLength(postData),
     },
-/*//    form: {
-            mail: 'mossom9@gmail.com',
-            password: '0606060606060606',
-            login_keep: 'on',
-            signin: 'login'
-    },//*/
     form: postData,
 //    proxy: 'http://myhost:8888',
 //    strictSSL: false,
     jar: true
 };
 
-//return null;
 console.log(Buffer.byteLength(JSON.stringify(postData)+'\n'));
 var Cookies;
 var CookieHeaders = [];
 var urlList;
 //exports.handler = (event, context, callback) => {
 //    console.log("recived event", event);
+
 var delay = function(){
     var d = jQuery.Deferred();
     console.log('deffinition of d');
@@ -148,8 +140,6 @@ var dfdGetURL = function (options) {
                 console.log(options);
                 return dfdGetURL(options);
             }
-
-            //console.log(body);
             dfd.resolve();
         }
         else {
