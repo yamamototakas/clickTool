@@ -15,7 +15,7 @@ console.log(postData.length);
 console.log(JSON.stringify(postData, null, 2));
 console.log(Object.keys(postData));
 
-return;
+//return;
 //postData=JSON.stringify(postData);
 
 var options_request = {
@@ -160,42 +160,6 @@ var dfdGetURL = function (options) {
     return dfd.promise();
 };
 
-/*
-dfdSingin(post_options_request)
-    .then(function(){
-        console.log(Cookies);
-    })
-    .then(function(){
-        options_request.url ="http://hapitas.jp/index/ajaxclickget";
-        options_request.headers["Cookie"] = Cookies;
-        return dfdCandidateURL(options_request);
-    })
-    .then(function(){
-        console.log(urlList);
-        urlList.forEach(function(each) {
-            options_request.url ="http://hapitas.jp/" + each;
-            console.log(options_request);
-            return dfdGetURL(options_request);
-        });
-    })
-    .fail(function(error){
-        console.log('Main function delayed error!!');
-});
-*///
-
-var set = [
-  'clickget/recive/id/2436/apn/top_clickget',
-  'clickget/recive/id/2437/apn/top_clickget',
-  'clickget/recive/id/2438/apn/top_clickget',
-  'clickget/recive/id/2439/apn/top_clickget',
-  'clickget/recive/id/2442/apn/top_clickget',
-  'clickget/recive/id/2443/apn/top_clickget',
-  'clickget/recive/id/2444/apn/top_clickget',
-  'clickget/recive/id/2445/apn/top_clickget',
-  'clickget/recive/id/2446/apn/top_clickget' ];
-
-
-//post_options_request.url = 'http://192.168.10.10/';
 
 dfdSingin(post_options_request)
     .then(function(){
@@ -209,15 +173,11 @@ dfdSingin(post_options_request)
     .then(function(){
         console.log(urlList);
         urlList.forEach(function(each) {
-        //var each=urlList[2];
             options_request.url ="http://hapitas.jp/" + each;
             options_request.headers["Cookie"] = Cookies;
-            //console.log(options_request);
             return dfdGetURL(options_request);
         });
-    })//*//
+    })
     .fail(function(error){
         console.log('Main function delayed error!!');
 });
-
-//*//
